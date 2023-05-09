@@ -12,61 +12,90 @@ const {
 
 export default {
   networks: {
-    hardhat: {
-      allowUnlimitedContractSize: true,
-      loggingEnabled: false
-    },
-    hhnode: {
-      url: `http://127.0.0.1:8545`,
-      accounts: [`0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`],
-      allowUnlimitedContractSize: true,
-      //gasPrice: 8,
-      gas: 10000000,
-      loggingEnabled: false
-    },
     mainnet: {
-      url: `https://mainnet.infura.io/v3/${INFURA_ID_PROJECT}`,
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      gasPrice: 120 * 1000000000,
+      chainId: 1,
     },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${INFURA_ID_PROJECT}`,
-      chainId: 3,
-      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
+    localhost: {
+      live: false,
+      saveDeployments: true,
+      tags: ["local"],
     },
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${INFURA_ID_PROJECT}`,
+    hardhat: {
+      forking: {
+        enabled: process.env.FORKING === "true",
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      },
+      live: false,
+      saveDeployments: true,
+      tags: ["test", "local"],
     },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${INFURA_ID_PROJECT}`,
+    arbitrumRinkeby: {
+      url: process.env.ARBITRUM_TESTNET_URL || "",
+      chainId: 421611,
+      timeout: 120000,
+      live: true,
+      saveDeployments: true,
+      accounts: devAccounts,
     },
-    kovan: {
-      url: `https://kovan.infura.io/v3/${INFURA_ID_PROJECT}`,
-      chainId: 42,
-      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
-      gasPrice: 8000000000
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2/0TXdb87nl9jHZVWAmYZKcVJilSNYDlp7`,
+      accounts: {
+        mnemonic: process.env.SEPOLIA,
+        path: "m/44'/60'/0'/0",
+        initialIndex: 0,
+        count: 20,
+        passphrase: "",
+      },
     },
-    bscTestnet: {
-      url: `https://data-seed-prebsc-2-s3.binance.org:8545`,
-      chainId: 97,
-      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`]
+    arbitrum: {
+      url: "https://rinkeby.arbitrum.io/rpc",
+      accounts: [
+        "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+      ],
+      live: true,
+      saveDeployments: true,
     },
-    bsc: {
-      url: `https://bsc-dataseed3.binance.org`,
+    arbitrumGoerli: {
+      url: process.env.ARBITRUM_GOERLI_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      chainId: 421613,
+      live: false,
+      saveDeployments: true,
+      gasMultiplier: 2,
     },
-    maticTestnet: {
-      url: `https://rpc-mumbai.maticvigil.com`,
-      chainId: 80001,
-      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
-    },
-    maticMainnet: {
-      url: `https://rpc-mainnet.matic.quiknode.pro`,
-      chainId: 137,
-      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
-      gasPrice: 50_000_000_000
-    }
   },
   etherscan: {
-    // Your API key for Etherscan
-    // Obtain one at https://etherscan.io/
-    apiKey: `${POLYGONSCAN_API_KEY}`,
+    apiKey: {
+      sepolia: "BE1VQDDS5RAKP9SQIZU94DBAWN876Y7G87",
+    },
+    customChains: [
+      {
+        network: "arbitrumGoerli",
+        chainId: 421613,
+        urls: {
+          apiURL:
+            "https://goerli-rollup-explorer.arbitrum.io/api?module=contract&action=verifysourcecode",
+          browserURL: "https://goerli-rollup-explorer.arbitrum.io",
+        },
+      },
+    ],
+  },
+  verify: {
+    etherscan: {
+      apiKey: "BE1VQDDS5RAKP9SQIZU94DBAWN876Y7G87",
+    },
+  },
+  paths: {
+    artifacts: "artifacts",
+    cache: "cache",
+    deploy: "deploy",
+    deployments: "deployments",
+    imports: "imports",
+    sources: "contracts",
+    tests: "test",
   },
 }
