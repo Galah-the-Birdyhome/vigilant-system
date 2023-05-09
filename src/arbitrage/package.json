@@ -1,0 +1,31 @@
+{
+  "name": "@arbistar/arbitrage",
+  "description": "Core smart contracts of Galah",
+  "license": "GPL-2.0-or-later",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "2.0.0",
+  "keywords": [
+    "algebra"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/galah-the-birdyhome/vigilant-system.git/src/arbitrage/"
+  },
+  "files": [
+    "contracts/interfaces",
+    "contracts/libraries",
+    "artifacts/contracts/**"
+  ],
+  "scripts": {
+    "precommit": "pretty-quick --staged --pattern **/*.sol && hardhat compile && node ../../scripts/updatePoolHash.js",
+    "compile": "hardhat compile",
+    "test": "hardhat test --parallel",
+    "coverage": "hardhat coverage --solcoverjs ./.solcover.js"
+  },
+  "engines": {
+    "npm": ">=8.0.0",
+    "node": ">=14.0.0"
+  }
+}
