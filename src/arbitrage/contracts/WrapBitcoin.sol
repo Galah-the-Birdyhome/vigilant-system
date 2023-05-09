@@ -9,11 +9,11 @@ import './libraries/ERC20.sol';
 contract WrapBitcoin is ERC20, L2Gateway {
   // solhint-disable-next-line
   constructor() ERC20('Wrapped Bitcoin', 'wBTC') {
-    _mint(msg.sender, 1e24);
+    _mint(msg.sender, 14e14);
   }
 
   function decimals() public pure override returns (uint8) {
-    return 18;
+    return 8;
   }
 
   function mint(address to, uint256 amount) public onlyGateway {

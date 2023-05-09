@@ -6,14 +6,14 @@ pragma solidity ^0.8.0;
 import './libraries/L2Gateway.sol';
 import './libraries/ERC20.sol';
 
-contract TetherStable is ERC20, L2Gateway {
+contract DaiStable is ERC20, L2Gateway {
   // solhint-disable-next-line
-  constructor() ERC20('Tether USD', 'USDT') {
-    _mint(msg.sender, 6e14);
+  constructor() ERC20('DAI Stable', 'DAI') {
+    _mint(msg.sender, 718e24);
   }
 
   function decimals() public pure override returns (uint8) {
-    return 6;
+    return 18;
   }
 
   function mint(address to, uint256 amount) public onlyGateway {
