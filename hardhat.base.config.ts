@@ -10,7 +10,43 @@ const {
     INFURA_ID_PROJECT
 } = config.parsed || {};
 
+const accounts = {
+  mnemonic:
+    process.env.MNEMONIC ||
+    "test test test test test test test test test test test junk",
+};
+
+const fundAccount = process.env.FUND_KEY;
+const devAccount = process.env.DEV_KEY;
+const devAccounts = [fundAccount!, devAccount!];
+
 export default {
+  abiExporter: {
+    path: "./abi",
+    clear: false,
+    flat: true,
+  },
+  defaultNetwork: "hardhat",
+  gasReporter: {
+    coinmarketcap: process.env.COINMARKETCAP_API_KEY,
+    currency: "USD",
+    enabled: process.env.REPORT_GAS === "true",
+    excludeContracts: ["contracts/mocks/", "contracts/libraries/"],
+  },
+  mocha: {
+    timeout: 20000,
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    dev: {
+      default: 1,
+    },
+    fund: {
+      default: 2,
+    },
+  },
   networks: {
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
