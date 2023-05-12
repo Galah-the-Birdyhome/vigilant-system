@@ -1,65 +1,99 @@
 module.exports = async function ({ getNamedAccounts, deployments }) {
-  const { deploy } = deployments;
-  const { deployer, dev, communityWallet, treasureWallet } =
-    await getNamedAccounts();
+  const { deploy } = deployments
+  const { deployer, dev } = await getNamedAccounts()
+  const networkName = hre.network.name
+  const fs = require('fs')
+  const path = require('path')
+  const resolvePath = ['../../../deploys/', networkName, '.deploy.json'].join('')
+  const deployDataPath = path.resolve(__dirname, resolvePath)
+  let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'))
 
-  const weth = await deploy("WETH", {
+  const weth = await deploy('WETH', {
     from: deployer,
     log: true,
-  });
+  })
+  await hre.run('verify:verify', {
+    address: weth.address,
+    constructorArguments: [],
+  })
+  deploysData.weth = weth.address
 
-  await deploy("WrapBitcoin", {
+  const wbtc = await deploy('WrapBitcoin', {
     from: deployer,
     log: true,
-  });
+  })
+  await hre.run('verify:verify', {
+    address: wbtc.address,
+    constructorArguments: [],
+  })
+  deploysData.wbtc = wbtc.address
 
-  await deploy("TetherStable", {
+  const usdt = await deploy('TetherStable', {
     from: deployer,
     log: true,
-  });
+  })
+  await hre.run('verify:verify', {
+    address: usdt.address,
+    constructorArguments: [],
+  })
+  deploysData.usdt = usdt.address
 
-  await deploy("OrbitrumStable", {
+  const usdo = await deploy('OrbitrumStable', {
     from: deployer,
     log: true,
-  });
+  })
+  await hre.run('verify:verify', {
+    address: usdo.address,
+    constructorArguments: [],
+  })
+  deploysData.usdo = usdo.address
 
-  await deploy("CircleStable", {
+  const usdc = await deploy('CircleStable', {
     from: deployer,
     log: true,
-  });
+  })
+  await hre.run('verify:verify', {
+    address: usdc.address,
+    constructorArguments: [],
+  })
+  deploysData.usdc = usdc.address
 
-  const factory = await deploy("ArbistarFactory", {
+  const dai = await deploy('DaiStable', {
+    from: deployer,
+    log: true,
+  })
+  await hre.run('verify:verify', {
+    address: dai.address,
+    constructorArguments: [],
+  })
+  deploysData.dai = dai.address
+
+  const factory = await deploy('ArbistarFactory', {
     from: deployer,
     args: [dev],
     log: true,
     deterministicDeployment: false,
-  });
-
-  const wethAddress = weth.address;
-  const factoryAddress = factory.address;
-
-  await hre.run("verify:verify", {
-    address: factoryAddress,
+  })
+  await hre.run('verify:verify', {
+    address: factory.address,
     constructorArguments: [dev],
-  });
+  })
+  deploysData.factory = factory.address
 
-  const router = await deploy("ArbistarRouter", {
+  const router = await deploy('ArbistarRouter', {
     from: deployer,
-    args: [factoryAddress, wethAddress],
+    args: [factory.address, weth.address],
     log: true,
     deterministicDeployment: false,
-  });
-  await hre.run("verify:verify", {
+  })
+  await hre.run('verify:verify', {
     address: router.address,
-    constructorArguments: [factoryAddress, wethAddress],
-  });
-};
+    constructorArguments: [factory.address, weth.address],
+  })
+  deploysData.router = router.address
 
-module.exports.tags = [
-  "WrappedTokens",
-  "AMM",
-  "ArbistarFactory",
-  "ArbistarRouter",
-  "FeeSplitter",
-];
-module.exports.dependencies = [];
+  fs.writeFileSync(deployDataPath, JSON.stringify(deploysData), 'utf-8')
+}
+
+module.exports.tags = ['WrappedTokens', 'AMM', 'ArbistarFactory', 'ArbistarRouter', 'FeeSplitter']
+module.exports.dependencies = []

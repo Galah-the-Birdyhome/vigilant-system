@@ -59,14 +59,6 @@ export default {
       saveDeployments: true,
       tags: ['test', 'local'],
     },
-    arbitrumRinkeby: {
-      url: process.env.ARBITRUM_TESTNET_URL || '',
-      chainId: 421611,
-      timeout: 120000,
-      live: true,
-      saveDeployments: true,
-      accounts: devAccounts,
-    },
     sepolia: {
       url: `https://eth-sepolia.g.alchemy.com/v2/0TXdb87nl9jHZVWAmYZKcVJilSNYDlp7`,
       accounts: {
@@ -82,14 +74,6 @@ export default {
       accounts: ['0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'],
       live: true,
       saveDeployments: true,
-    },
-    arbitrumGoerli: {
-      url: process.env.ARBITRUM_GOERLI_URL || '',
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      chainId: 421613,
-      live: false,
-      saveDeployments: true,
-      gasMultiplier: 2,
     },
   },
   etherscan: {

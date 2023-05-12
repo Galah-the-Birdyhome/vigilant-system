@@ -23,7 +23,9 @@ interface IAlgebraPoolDerivedState {
    * @return volatilityCumulatives Cumulative standard deviation as of each `secondsAgos`
    * @return volumePerAvgLiquiditys Cumulative swap volume per liquidity as of each `secondsAgos`
    */
-  function getTimepoints(uint32[] calldata secondsAgos)
+  function getTimepoints(
+    uint32[] calldata secondsAgos
+  )
     external
     view
     returns (
@@ -44,12 +46,18 @@ interface IAlgebraPoolDerivedState {
    * @return innerSecondsSpentPerLiquidity The snapshot of seconds per liquidity for the range
    * @return innerSecondsSpent The snapshot of the number of seconds during which the price was in this range
    */
-  function getInnerCumulatives(int24 bottomTick, int24 topTick)
-    external
-    view
-    returns (
-      int56 innerTickCumulative,
-      uint160 innerSecondsSpentPerLiquidity,
-      uint32 innerSecondsSpent
-    );
+  function getInnerCumulatives(
+    int24 bottomTick,
+    int24 topTick
+  ) external view returns (int56 innerTickCumulative, uint160 innerSecondsSpentPerLiquidity, uint32 innerSecondsSpent);
+
+  /**
+   * @notice Returns a cumulative of the pool that deployed by Algebra Factory
+   * @dev Snapshots is only cumulative value atm
+   * snapshot is taken and the second snapshot is taken.
+   * @return _poolAddress The address of Pool
+   * @return _token0 The snapshot balance of Token0
+   * @return _token1 The snapshot balance of Token1
+   */
+  function getPoolInfo() external view returns (address _poolAddress, uint256 _token0, uint256 _token1);
 }

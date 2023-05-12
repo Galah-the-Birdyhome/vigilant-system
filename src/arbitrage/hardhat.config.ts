@@ -6,11 +6,16 @@ import 'hardhat-deploy'
 import 'hardhat-deploy-ethers'
 import 'hardhat-gas-reporter'
 import 'hardhat-spdx-license-identifier'
+import '@nomiclabs/hardhat-etherscan'
+import '@nomiclabs/hardhat-solhint'
+import 'hardhat-watcher'
+import 'solidity-coverage'
+
 import { SolcUserConfig } from 'hardhat/types'
 import baseConfig from '../../hardhat.base.config'
 
 const DEFAULT_COMPILER_SETTINGS: SolcUserConfig = {
-  version: '0.8.18',
+  version: '0.8.16',
   settings: {
     optimizer: {
       enabled: true,
@@ -45,6 +50,15 @@ export default {
   },
   solidity: {
     compilers: [DEFAULT_COMPILER_SETTINGS],
+  },
+  paths: {
+    artifacts: 'artifacts',
+    cache: 'cache',
+    deploy: 'deploy',
+    deployments: 'deployments',
+    imports: 'imports',
+    sources: 'contracts',
+    tests: 'test',
   },
   docgen: {
     output: '../../docs/Contracts/Core',

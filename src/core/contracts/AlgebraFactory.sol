@@ -4,8 +4,10 @@ pragma abicoder v2;
 
 import './interfaces/IAlgebraFactory.sol';
 import './interfaces/IAlgebraPoolDeployer.sol';
+import './interfaces/IAlgebraPool.sol';
 import './interfaces/IDataStorageOperator.sol';
 import './libraries/AdaptiveFee.sol';
+import './libraries/EnumerableSet.sol';
 import './DataStorageOperator.sol';
 
 /**
@@ -13,6 +15,9 @@ import './DataStorageOperator.sol';
  * @notice Is used to deploy pools and its dataStorages
  */
 contract AlgebraFactory is IAlgebraFactory {
+  using EnumerableSet for EnumerableSet.AddressSet;
+  EnumerableSet.AddressSet private _pools;
+
   /// @inheritdoc IAlgebraFactory
   address public override owner;
 
@@ -70,6 +75,7 @@ contract AlgebraFactory is IAlgebraFactory {
 
     poolByPair[token0][token1] = pool; // to avoid future addresses comparing we are populating the mapping twice
     poolByPair[token1][token0] = pool;
+    _pools.add(pool);
     emit Pool(token0, token1, pool);
   }
 
@@ -92,6 +98,24 @@ contract AlgebraFactory is IAlgebraFactory {
     require(vaultAddress != _vaultAddress);
     emit VaultAddress(_vaultAddress);
     vaultAddress = _vaultAddress;
+  }
+
+  function setFeeSplitterAddresses(address[] calldata _feeSplitter, bool _splitEnable) external onlyOwner {
+    require(_feeSplitter.length > 0);
+    uint256 _index = 0;
+    address _pool = _pools.at(_index);
+    if (_splitEnable)
+      for (uint256 i = 0; i < _pools.length(); i++) {
+        IAlgebraPool(_pool).setCommunityFee(Constants.MAX_COMMUNITY_FEE, Constants.MAX_COMMUNITY_FEE, true);
+        _pool = _pools.at(i);
+      }
+    else {
+      _pool = _feeSplitter[0];
+      for (uint256 i = 0; i < _feeSplitter.length; i++) {
+        IAlgebraPool(_pool).setCommunityFee(Constants.MAX_COMMUNITY_FEE, Constants.MAX_COMMUNITY_FEE, true);
+        _pool = _pools.at(i);
+      }
+    }
   }
 
   /// @inheritdoc IAlgebraFactory
@@ -121,5 +145,11 @@ contract AlgebraFactory is IAlgebraFactory {
   /// @return pool The contract address of the Algebra pool
   function computeAddress(address token0, address token1) internal view returns (address pool) {
     pool = address(uint256(keccak256(abi.encodePacked(hex'ff', poolDeployer, keccak256(abi.encode(token0, token1)), POOL_INIT_CODE_HASH))));
+  }
+
+  function poolInfo(uint8 _index) external view returns (uint8 _poolIndex, address _pool, uint256 _token0, uint256 _token1) {
+    _poolIndex = _index;
+    (_pool, _token0, _token1) = IAlgebraPool(_pool).getPoolInfo();
+    require(_pool == _pools.at(_index), 'Indexes Failure');
   }
 }
